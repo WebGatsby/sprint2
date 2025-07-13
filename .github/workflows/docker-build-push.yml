@@ -6,6 +6,7 @@ on:
     branches: [ main, cinema ]
     paths:
       - 'src/**'
+      - 'tests/postman/**'
       - '.github/workflows/docker-build-push.yml'
   release:
     types: [published]
@@ -103,7 +104,18 @@ jobs:
           labels: ${{ steps.meta-proxy.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
+      - name: Run Proxy Service container
+        run: docker run -d --name proxy-service -p 8080:8080 ${{ env.REGISTRY }}/${{ env.PROXY_SERVICE_IMAGE_NAME }}
+        
+      - name: Wait for Proxy Service to be ready
+        run: |
+          until curl -s http://localhost:8080/api/proxy/health; do
+            echo "Waiting for Proxy Service...";
+            sleep 2;
+          done
+
+
       - name: Extract metadata (tags, labels) for Events Service
         id: meta-events
         uses: docker/metadata-action@v4
@@ -124,4 +136,25 @@ jobs:
           tags: ${{ steps.meta-events.outputs.tags }}
           labels: ${{ steps.meta-events.outputs.labels }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max      
+          cache-to: type=gha,mode=max
+          
+      - name: Run Events Service container
+        run: docker run -d --name events-service -p 8081:8080 ${{ env.REGISTRY }}/${{ env.EVENTS_SERVICE_IMAGE_NAME }}
+        
+      - name: Wait for Events Service to be ready
+        run: |
+          until curl -s http://localhost:8081/api/events/health; do
+            echo "Waiting for Events Service...";
+            sleep 2;
+          done
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # или другую, если нужно
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run API tests
+        run: npm run test:local
+       
