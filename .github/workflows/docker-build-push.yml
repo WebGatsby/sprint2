@@ -104,9 +104,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Run Proxy Service container
-        run: docker run -d --name proxy-service -p 8000:8000 ghcr.io/${{ env.PROXY_SERVICE_IMAGE_NAME }}
-
       - name: Extract metadata (tags, labels) for Events Service
         id: meta-events
         uses: docker/metadata-action@v4
@@ -128,9 +125,6 @@ jobs:
           labels: ${{ steps.meta-events.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Run Events Service container
-        run: docker run -d --name events-service -p 8082:8082 ghcr.io/${{ env.EVENTS_SERVICE_IMAGE_NAME }}
 
 
       - name: Set up Node.js
