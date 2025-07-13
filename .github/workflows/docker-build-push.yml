@@ -22,10 +22,10 @@ jobs:
       packages: write
     env:
       REPO_LOWER: ${{ github.repository_lower }}
-      MONOLITH_IMAGE_NAME: ${{ env.REPO_LOWER }}/monolith
-      MOVIES_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/movies-service
-      EVENTS_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/events-service
-      PROXY_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/proxy-service
+      MONOLITH_IMAGE_NAME: ${{ github.repository_lower }}/monolith
+      MOVIES_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/movies-service
+      EVENTS_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/events-service
+      PROXY_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/proxy-service
 
     steps:
       - name: Checkout repository
