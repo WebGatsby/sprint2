@@ -13,12 +13,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  REPO_LOWER: ${{ github.repository | toLower }}
-  MONOLITH_IMAGE_NAME: ${{ env.REPO_LOWER }}/monolith
-  MOVIES_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/movies-service
-  EVENTS_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/events-service
-  PROXY_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/proxy-service
-
 
 jobs:
   build-and-push:
@@ -26,6 +20,12 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      REPO_LOWER: ${{ github.repository_lower }}
+      MONOLITH_IMAGE_NAME: ${{ env.REPO_LOWER }}/monolith
+      MOVIES_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/movies-service
+      EVENTS_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/events-service
+      PROXY_SERVICE_IMAGE_NAME: ${{ env.REPO_LOWER }}/proxy-service
 
     steps:
       - name: Checkout repository
@@ -84,7 +84,7 @@ jobs:
           labels: ${{ steps.meta-movies.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
       - name: Extract metadata (tags, labels) for Proxy Service
         id: meta-proxy
         uses: docker/metadata-action@v4
@@ -108,15 +108,14 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Proxy Service container
-        run: docker run -d --name proxy-service -p 8080:8080 ${{ env.REGISTRY }}/${{ env.PROXY_SERVICE_IMAGE_NAME }}
-        
+        run: docker run -d --name proxy-service -p 8080:8080 ghcr.io/${{ env.PROXY_SERVICE_IMAGE_NAME }}
+
       - name: Wait for Proxy Service to be ready
         run: |
           until curl -s http://localhost:8080/api/proxy/health; do
             echo "Waiting for Proxy Service...";
             sleep 2;
           done
-
 
       - name: Extract metadata (tags, labels) for Events Service
         id: meta-events
@@ -139,24 +138,24 @@ jobs:
           labels: ${{ steps.meta-events.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          
+
       - name: Run Events Service container
-        run: docker run -d --name events-service -p 8081:8080 ${{ env.REGISTRY }}/${{ env.EVENTS_SERVICE_IMAGE_NAME }}
-        
+        run: docker run -d --name events-service -p 8081:8080 ghcr.io/${{ env.EVENTS_SERVICE_IMAGE_NAME }}
+
       - name: Wait for Events Service to be ready
         run: |
           until curl -s http://localhost:8081/api/events/health; do
             echo "Waiting for Events Service...";
             sleep 2;
           done
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # или другую, если нужно
+          node-version: '18'
 
       - name: Install dependencies
         run: npm install
 
       - name: Run API tests
         run: npm run test:local
-       
