@@ -13,6 +13,10 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  MONOLITH_IMAGE_NAME: ${{ github.repository }}/monolith
+  MOVIES_SERVICE_IMAGE_NAME: ${{ github.repository }}/movies-service
+  EVENTS_SERVICE_IMAGE_NAME: ${{ github.repository }}/events-service
+  PROXY_SERVICE_IMAGE_NAME: ${{ github.repository }}/proxy-service
 
 jobs:
   build-and-push:
@@ -20,12 +24,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      REPO_LOWER: ${{ github.repository_lower }}
-      MONOLITH_IMAGE_NAME: ${{ github.repository_lower }}/monolith
-      MOVIES_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/movies-service
-      EVENTS_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/events-service
-      PROXY_SERVICE_IMAGE_NAME: ${{ github.repository_lower }}/proxy-service
 
     steps:
       - name: Checkout repository
@@ -159,3 +157,4 @@ jobs:
 
       - name: Run API tests
         run: npm run test:local
+      
