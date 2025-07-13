@@ -1,0 +1,43 @@
+@startuml
+title Streaming service Container Diagram
+
+top to bottom direction
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+Person(user, "User", "A user of the streaming service")
+Person(admin, "Administrator", "An administrator managing the streaming service")
+System(StreamingService, "Streaming service")
+
+Container_Boundary(StreamingService, "Streaming service") {
+  Container(WebApp, "Any Application", "JavaScript, React", "Handles user interactions")
+  Container(Gateway, "API Gateway", "Go", "Handles API requests")
+  Container(PDS, "Personal Data Service", "Go", "Handles personal data requests")
+  Container(UCS, "User Content Service", "Go", "Handles user content requests")
+  Container(PaS, "Payment Service", "Go", "Handles payments requests")
+  Container(VSS, "Video Streaming Service", "Go", "Handles streaming requests")
+  Container(PrS, "Promo Service", "Go", "Handles promo actions requests")
+  Container(SS, "Subscriptions Service", "Go", "Handles subscriptions requests")
+
+}
+
+System_Ext(RS, "Recommendation system", "External API for recommendations")
+System_Ext(PaSy, "Payment System", "External API for payments")
+System_Ext(S3, "S3", "External API for data storage")
+
+
+Rel(user, WebApp, "Uses the service")
+Rel(admin, WebApp,"Manages the service")
+Rel(WebApp, Gateway,"Get and send data")
+BiRel(Gateway, PDS,"Get and send data")
+BiRel(Gateway, UCS,"Get and send data")
+BiRel(Gateway, PaS,"Get and send data")
+BiRel(Gateway, VSS,"Get and send data")
+BiRel(Gateway, PrS,"Get and send data")
+BiRel(Gateway, SS,"Get and send data")
+Rel(PaS, PaSy, "Get and send data")
+Rel(Gateway, RS,"Get and send data")
+Rel(Gateway, S3,"Get and send data")
+
+
+@enduml
