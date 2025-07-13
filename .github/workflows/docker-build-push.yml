@@ -105,7 +105,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run Proxy Service container
-        run: docker run -d --name proxy-service -p 8080:8080 ghcr.io/${{ env.PROXY_SERVICE_IMAGE_NAME }}
+        run: docker run -d --name proxy-service -p 8000:8000 ghcr.io/${{ env.PROXY_SERVICE_IMAGE_NAME }}
 
       - name: Extract metadata (tags, labels) for Events Service
         id: meta-events
