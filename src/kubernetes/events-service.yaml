@@ -74,3 +74,16 @@ spec:
               memory: "128Mi"
       imagePullSecrets:
         - name: dockerconfigjson
+        
+apiVersion: v1
+kind: Service
+metadata:
+  name: events-service
+  namespace: cinemaabyss
+spec:
+  selector:
+    app: events-service
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
